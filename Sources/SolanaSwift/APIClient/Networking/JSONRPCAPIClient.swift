@@ -174,6 +174,19 @@ public class JSONRPCAPIClient: SolanaAPIClient {
         return result.value
     }
 
+    public func getTokenAccountsByOwnerParseJSON<T: TokenAccountParse>(
+        pubkey: String,
+        params: OwnerInfoParams?,
+        configs: RequestConfiguration?,
+        decodingTo _: T.Type
+    ) async throws -> [TokenAccount2<T>] {
+        let result: Rpc<[TokenAccount2<T>]> = try await get(
+            method: "getTokenAccountsByOwner",
+            params: [pubkey, params, configs]
+        )
+        return result.value
+    }
+
     public func getTokenLargestAccounts(pubkey: String, commitment: Commitment? = nil) async throws -> [TokenAmount] {
         try await get(method: "getTokenLargestAccounts", params: [pubkey, RequestConfiguration(commitment: commitment)])
     }

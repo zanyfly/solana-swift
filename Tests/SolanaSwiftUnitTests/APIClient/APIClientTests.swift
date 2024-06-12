@@ -287,6 +287,21 @@ class APIClientTests: XCTestCase {
         XCTAssertEqual(result.first?.account.owner, TokenProgram.id.base58EncodedString)
     }
 
+    func testGetTokenAccountsByOwnerParseJSON() async throws {
+        let endpoint = APIEndPoint(
+            address: "https://api.devnet.solana.com",
+            network: .devnet
+        )
+        let apiClient = JSONRPCAPIClient(endpoint: endpoint)
+        let result = try await apiClient.getTokenAccountsByOwnerParseJSON(
+            pubkey: "HnXJX1Bvps8piQwDYEYC6oea9GEkvQvahvRj3c97X9xr",
+            params: .init(mint: nil, programId: TokenProgram.id.base58EncodedString),
+            configs: .init(encoding: "jsonParsed"),
+            decodingTo: TokenAccountDataParsed.self
+        )
+        XCTAssertEqual(result.first?.account.owner, TokenProgram.id.base58EncodedString)
+    }
+
     func testGetToken2022AccountsByOwner() async throws {
         let mock = NetworkManagerMock(NetworkManagerMockJSON["getToken2022AccountsByOwner"]!)
         let apiClient = JSONRPCAPIClient(endpoint: endpoint, networkManager: mock)
