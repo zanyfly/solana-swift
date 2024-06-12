@@ -44,10 +44,10 @@ public class BlockchainClient: SolanaBlockchainClient {
                 minRentExemption: minRentExemption
             )
         }
-        let expectedFee = try feeCalculator.calculateNetworkFee(transaction: transaction)
-
         let blockhash = try await apiClient.getRecentBlockhash()
         transaction.recentBlockhash = blockhash
+
+        let expectedFee = try feeCalculator.calculateNetworkFee(transaction: transaction)
 
         // if any signers, sign
         if !signers.isEmpty {

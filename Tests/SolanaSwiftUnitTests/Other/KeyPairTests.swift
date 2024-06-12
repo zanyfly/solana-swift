@@ -2,6 +2,21 @@ import SolanaSwift
 import TweetNacl
 import XCTest
 
+extension Data {
+  public init(hex: String) {
+    self.init(Array<UInt8>(hex: hex))
+  }
+
+  public var bytes: Array<UInt8> {
+    Array(self)
+  }
+
+  public func toHexString() -> String {
+    self.bytes.toHexString()
+  }
+}
+
+
 class KeyPairTests: XCTestCase {
     func testRestoreKeyPairFromSecretKey() throws {
         let secretKey = Base58
