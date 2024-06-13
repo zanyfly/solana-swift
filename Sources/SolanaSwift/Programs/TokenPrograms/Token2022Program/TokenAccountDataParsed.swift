@@ -1,7 +1,7 @@
-struct TokenAccountDataParsed: TokenAccountParse {
-    let mint: String
-    let owner: String
-    let program: String
+public struct TokenAccountDataParsed: TokenAccountParse {
+    public let mint: String
+    public let owner: String
+    public let program: String
     enum CodingKeys: CodingKey {
         case program
         case parsed
@@ -15,7 +15,7 @@ struct TokenAccountDataParsed: TokenAccountParse {
         }
     }
 
-    init(from decoder: Decoder) throws {
+    public init(from decoder: Decoder) throws {
         let container = try decoder.container(keyedBy: CodingKeys.self)
         let parsed = try container.nestedContainer(keyedBy: CodingKeys.ParsedCodingKeys.self, forKey: .parsed)
         let info = try parsed.nestedContainer(keyedBy: CodingKeys.ParsedCodingKeys.InfoCodingKeys.self, forKey: .info)
