@@ -171,4 +171,57 @@ public struct KeyPair: Codable, Hashable {
         self.publicKey = publicKey
         self.secretKey = secretKey
     }
+
+    /// Create account with seed phrase
+    /// - Parameters:
+    ///   - phrase: secret phrase for an account, leave it empty for new account
+    ///   - network: network in which account should be created
+    /// - Throws: Error if the derivation is not successful
+    public init(phrase: [String] = [], network: Network, derivablePath: DerivablePath? = nil) throws {
+        let mnemonic: Mnemonic
+        var phrase = phrase.filter { !$0.isEmpty }
+        if !phrase.isEmpty {
+            mnemonic = try Mnemonic(phrase: phrase)
+        } else {
+            // change from 12-words to 24-words (128 to 256)
+            mnemonic = Mnemonic()
+            phrase = mnemonic.phrase
+        }
+
+        var derivablePath = derivablePath
+        if derivablePath == nil {
+            if phrase.count == 12 {
+                derivablePath = .init(type: .deprecated, walletIndex: 0, accountIndex: 0)
+            } else {
+                derivablePath = .default
+            }
+        }
+
+        let publicKey: PublicKey
+        let secretKey: Data
+
+        switch derivablePath!.type {
+        case .deprecated:
+            let keychain = try Keychain(seedString: phrase.joined(separator: " "), network: network.cluster)
+            guard let seed = try keychain?.derivedKeychain(at: derivablePath!.rawValue).privateKey else {
+                throw KeyPairError.couldNotDerivatePrivateKey
+            }
+
+            let keys = try NaclSign.KeyPair.keyPair(fromSeed: seed)
+
+            publicKey = try .init(data: keys.publicKey)
+            secretKey = keys.secretKey
+        default:
+            let keys = try Ed25519HDKey.derivePath(derivablePath!.rawValue, seed: mnemonic.seed.toHexString()).get()
+            let keyPair = try NaclSign.KeyPair.keyPair(fromSeed: keys.key)
+            let newKey = try PublicKey(data: keyPair.publicKey)
+
+            publicKey = newKey
+            secretKey = keyPair.secretKey
+        }
+
+        self.phrase = phrase
+        self.publicKey = publicKey
+        self.secretKey = secretKey
+    }
 }
