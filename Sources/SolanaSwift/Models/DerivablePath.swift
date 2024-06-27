@@ -8,7 +8,7 @@ public struct DerivablePath: Hashable, Codable {
         case bip44
         case deprecated
 
-        var prefix: String {
+        public var prefix: String {
             switch self {
             case .deprecated:
                 return "m/501'"
