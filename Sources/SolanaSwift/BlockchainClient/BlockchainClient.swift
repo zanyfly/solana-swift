@@ -74,9 +74,9 @@ public class BlockchainClient: SolanaBlockchainClient {
     ) async throws -> PreparedTransaction {
         let feePayer = feePayer ?? account.publicKey
         let fromPublicKey = account.publicKey
-        if fromPublicKey.base58EncodedString == destination {
-            throw BlockchainClientError.sendTokenToYourSelf
-        }
+//        if fromPublicKey.base58EncodedString == destination {
+//            throw BlockchainClientError.sendTokenToYourSelf
+//        }
         var accountInfo: BufferInfo<EmptyInfo>?
         do {
             accountInfo = try await apiClient.getAccountInfo(account: destination)
@@ -141,9 +141,9 @@ public class BlockchainClient: SolanaBlockchainClient {
         let toPublicKey = splDestination.destination
 
         // catch error
-        if fromPublicKey == toPublicKey.base58EncodedString {
-            throw BlockchainClientError.sendTokenToYourSelf
-        }
+//        if fromPublicKey == toPublicKey.base58EncodedString {
+//            throw BlockchainClientError.sendTokenToYourSelf
+//        }
 
         let fromPublicKey = try PublicKey(string: fromPublicKey)
 
